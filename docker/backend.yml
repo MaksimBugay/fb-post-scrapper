@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+
+  fb-scrapper:
+    restart: unless-stopped
+    image: n7fr846yfa6ohlhe/mbugai:fb-scrapper-1000
+    environment:
+      - 'FB_SCRAPPER_TEST=test'
+    networks:
+      default:
+        aliases:
+          - fb-scrapper-local
+    ports:
+      - '25080:80'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    labels:
+      filebeats_log: "false"
+    deploy:
+      labels:
+        - traefik.enable=false
+      replicas: 1
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 9999999
+        window: 90s
+
+networks:
+  default:
+    external: true
+    name: "mla"
